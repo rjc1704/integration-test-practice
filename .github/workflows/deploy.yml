@@ -6,20 +6,25 @@ on:
       - main
 
 jobs:
-  Deploy:
-    runs-on: ubuntu-latest # 깃헙액션 워크플로우가 실행되는 OS 환경. EC2 OS와 같은 필요 없음
+  deploy:
+    runs-on: ubuntu-latest
     steps:
       - name: SSH로 EC2에 접속하기
-        uses: appleboy/ssh-action@v1.0.3 # ssh-action(host, username, key, script_stop, script)
+        uses: appleboy/ssh-action@v1.0.3
+        env:
+          ENV: ${{ secrets.ENV }} # 스크립트에서 사용할 환경변수로 ENV 선언
         with:
-          host: ${{ secrets.EC2_HOST }} # EC2의 주소
-          username: ${{ secrets.EC2_USERNAME }} # EC2 접속 username
-          key: ${{ secrets.EC2_PRIVATE_KEY }} # EC2의 Key 파일의 내부 텍스트
-          script_stop: true # 아래 script 중 실패하는 명령이 하나라도 있으면 실패로 처리
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          envs: ENV
+          script_stop: true
           script: |
-            cd /home/ec2-user/cicd-pracice # 여기 경로는 자신의 EC2에 맞는 경로로 재작성하기
+            cd /home/ubuntu/cicd-nest-test
+            rm -rf .env
             git pull origin main
+            echo "$ENV" > .env
             npm ci
             npm run build
             pm2 kill
-            pm2 start dist/app.js --name "express-server"
+            pm2 start dist/main.js --name "backend-server"
