@@ -20,7 +20,7 @@ jobs:
           envs: ENV
           script_stop: true
           script: |
-            cd /home/ec2-user/cicd-pracice
+            cd /home/ec2-user/cicd-practice
             rm -rf .env
             git pull origin main
             echo "$ENV" > .env
