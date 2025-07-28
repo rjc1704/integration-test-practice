@@ -22,4 +22,4 @@ jobs:
             npm ci
             npm run build
             pm2 kill
-            pm2 start dist/main.js --name "express-server"
+            pm2 start dist/app.js --name "express-server"
