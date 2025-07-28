@@ -5,20 +5,16 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/app.js",
-    "test": "jest"
+    "start": "node dist/app.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "dotenv": "^17.2.1",
     "express": "^5.1.0",
     "typescript": "^5.8.3"
   },
   "devDependencies": {
-    "@types/express": "^5.0.3",
-    "@types/jest": "^30.0.0",
-    "jest": "^30.0.5"
+    "@types/express": "^5.0.3"
   }
 }
