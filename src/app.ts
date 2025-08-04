@@ -3,7 +3,6 @@ import helmet from "helmet";
 import morgan from "morgan";
 import jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
-import "dotenv/config";
 
 // 커스텀 미들웨어 import
 import { verifyAccessToken } from "./middlewares/auth";
@@ -12,6 +11,8 @@ import {
   validateUserId,
   validateLoginBody,
 } from "./middlewares/validation";
+
+import("dotenv/config");
 
 const app = express();
 const prisma = new PrismaClient();

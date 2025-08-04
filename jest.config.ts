@@ -7,10 +7,4 @@ module.exports = {
     "^.+\\.ts$": "ts-jest",
   },
   collectCoverageFrom: ["src/**/*.ts", "!src/**/*.d.ts"],
-  testEnvironmentOptions: {
-    env: {
-      NODE_ENV: "test",
-      DATABASE_URL: "postgresql://postgres:password@localhost:5432/testdb_test",
-    },
-  },
 };

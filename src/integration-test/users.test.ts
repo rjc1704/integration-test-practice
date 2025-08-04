@@ -2,7 +2,6 @@ import request from "supertest";
 import app from "../app";
 import { PrismaClient } from "@prisma/client";
 
-// 통합테스트에서는 실제 데이터베이스를 사용합니다
 const prisma = new PrismaClient();
 
 describe("POST /login - 로그인 API 테스트", () => {
@@ -160,7 +159,7 @@ describe("GET /users - 사용자 목록 조회 API 테스트", () => {
 
   test("인증 토큰 없이 사용자 목록 조회 시 401 에러를 반환해야 한다", async () => {
     // Exercise: API 요청 실행
-    const response = await request(app).get("/users").expect(401);
+    const response = await agent.get("/users").expect(401);
 
     // Assertion: 결과 검증
     expect(response.body).toHaveProperty("error");
