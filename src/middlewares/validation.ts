@@ -7,7 +7,7 @@ export const validateUserBody = (
 ) => {
   console.log("📝 사용자 데이터 유효성 검사 시작");
 
-  const { email, name } = req.body;
+  const { email, password } = req.body;
 
   // 이메일 형식 검사
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -16,12 +16,12 @@ export const validateUserBody = (
     return res.status(400).json({ error: "올바른 이메일 형식이 필요합니다." });
   }
 
-  // 이름 길이 검사
-  if (!name || name.length < 2) {
-    console.log("❌ 이름은 최소 2자 이상이어야 합니다");
+  // 비밀번호 길이 검사
+  if (!password || password.length < 6) {
+    console.log("❌ 비밀번호는 최소 6자 이상이어야 합니다");
     return res
       .status(400)
-      .json({ error: "이름은 최소 2자 이상이어야 합니다." });
+      .json({ error: "비밀번호는 최소 6자 이상이어야 합니다." });
   }
 
   console.log("✅ 사용자 데이터 유효성 검사 통과");

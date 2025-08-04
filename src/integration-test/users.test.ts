@@ -25,7 +25,7 @@ describe("POST /login - 로그인 API 테스트", () => {
       .post("/users")
       .send({
         email: "test@example.com",
-        name: "테스트 사용자",
+        password: "password123",
       })
       .expect(201);
 
@@ -43,7 +43,6 @@ describe("POST /login - 로그인 API 테스트", () => {
     expect(response.body).toHaveProperty("token");
     expect(response.body).toHaveProperty("user");
     expect(response.body.user.email).toBe("test@example.com");
-    expect(response.body.user.name).toBe("테스트 사용자");
   });
 
   test("존재하지 않는 이메일로 로그인 시 401 에러를 반환해야 한다", async () => {
@@ -67,7 +66,7 @@ describe("POST /login - 로그인 API 테스트", () => {
       .post("/users")
       .send({
         email: "test@example.com",
-        name: "테스트 사용자",
+        password: "password123",
       })
       .expect(201);
 
@@ -129,7 +128,7 @@ describe("GET /users - 사용자 목록 조회 API 테스트", () => {
       .post("/users")
       .send({
         email: "test@example.com",
-        name: "테스트 사용자",
+        password: "password123",
       })
       .expect(201);
 
@@ -231,11 +230,11 @@ describe("POST /users - 사용자 생성 API 테스트", () => {
     expect(users.length).toBe(0);
   });
 
-  test("이름이 너무 짧으면 400 에러를 반환해야 한다", async () => {
+  test("비밀번호가 너무 짧으면 400 에러를 반환해야 한다", async () => {
     // Setup: 잘못된 테스트 데이터 준비
     const invalidData = {
       email: "test@example.com",
-      name: "A", // 1자만
+      password: "123", // 3자만
     };
 
     // Exercise: API 요청 실행
@@ -246,7 +245,7 @@ describe("POST /users - 사용자 생성 API 테스트", () => {
 
     // Assertion: 결과 검증
     expect(response.body).toHaveProperty("error");
-    expect(response.body.error).toContain("최소 2자");
+    expect(response.body.error).toContain("비밀번호는 최소 6자");
 
     // Assertion: DB에 저장되지 않았는지 확인
     const users = await prisma.user.findMany({
@@ -259,7 +258,7 @@ describe("POST /users - 사용자 생성 API 테스트", () => {
     // Setup: 테스트 데이터 준비
     const userData = {
       email: "test@example.com",
-      name: "테스트 사용자",
+      password: "password123",
     };
 
     // Exercise: API 요청 실행
@@ -271,7 +270,7 @@ describe("POST /users - 사용자 생성 API 테스트", () => {
     // Assertion: 결과 검증
     expect(response.body).toHaveProperty("id");
     expect(response.body.email).toBe(userData.email);
-    expect(response.body.name).toBe(userData.name);
+    expect(response.body.password).toBe(userData.password);
 
     // Assertion: DB에 실제로 저장되었는지 확인 (통합테스트의 핵심)
     const savedUser = await prisma.user.findUnique({
@@ -279,7 +278,7 @@ describe("POST /users - 사용자 생성 API 테스트", () => {
     });
     expect(savedUser).toBeTruthy();
     expect(savedUser?.email).toBe(userData.email);
-    expect(savedUser?.name).toBe(userData.name);
+    expect(savedUser?.password).toBe(userData.password);
   });
 
   test("중복된 이메일로 사용자 생성 시 에러를 반환해야 한다", async () => {
@@ -288,13 +287,13 @@ describe("POST /users - 사용자 생성 API 테스트", () => {
       .post("/users")
       .send({
         email: "duplicate@example.com",
-        name: "첫 번째 사용자",
+        password: "password123",
       })
       .expect(201);
 
     const duplicateData = {
       email: "duplicate@example.com",
-      name: "두 번째 사용자",
+      password: "password456",
     };
 
     // Exercise: API 요청 실행
@@ -308,7 +307,7 @@ describe("POST /users - 사용자 생성 API 테스트", () => {
       where: { email: "duplicate@example.com" },
     });
     expect(users.length).toBe(1);
-    expect(users[0].name).toBe("첫 번째 사용자");
+    expect(users[0].password).toBe("password123");
   });
 });
 
@@ -326,7 +325,7 @@ describe("GET /users/:id - 개별 사용자 조회 API 테스트", () => {
       .post("/users")
       .send({
         email: "test@example.com",
-        name: "테스트 사용자",
+        password: "password123",
       })
       .expect(201);
 
@@ -375,7 +374,7 @@ describe("GET /users/:id - 개별 사용자 조회 API 테스트", () => {
     // Assertion: 결과 검증
     expect(response.body).toHaveProperty("id");
     expect(response.body).toHaveProperty("email");
-    expect(response.body).toHaveProperty("name");
+    expect(response.body).toHaveProperty("password");
     expect(response.body.id).toBe(testUser.id);
     expect(response.body.email).toBe("test@example.com");
   });
@@ -422,7 +421,7 @@ describe("GET /users/:id - 개별 사용자 조회 API 테스트", () => {
       .post("/users")
       .send({
         email: "another@example.com",
-        name: "다른 사용자",
+        password: "password456",
       })
       .expect(201);
 
@@ -437,7 +436,7 @@ describe("GET /users/:id - 개별 사용자 조회 API 테스트", () => {
     // Assertion: 결과 검증
     expect(response.body).toHaveProperty("id", anotherUser.id);
     expect(response.body).toHaveProperty("email", "another@example.com");
-    expect(response.body).toHaveProperty("name", "다른 사용자");
+    expect(response.body).toHaveProperty("password", "password456");
   });
 
   test("로그인된 agent로 토큰 없이 요청하면 401 에러를 반환해야 한다", async () => {

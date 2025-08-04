@@ -29,7 +29,6 @@ app.use(express.json()); // JSON 파싱
 app.get("/", (req, res) => {
   res.json({
     message: "Express 서버가 동작중입니다!",
-    dbHost: process.env.DB_HOST,
   });
 });
 
@@ -76,7 +75,6 @@ app.post(
         user: {
           id: user.id,
           email: user.email,
-          name: user.name,
         },
       });
     } catch (error) {
@@ -106,10 +104,10 @@ app.post(
   async (req, res) => {
     try {
       console.log("🎯 사용자 생성 핸들러 실행");
-      const { email, name } = req.body;
+      const { email, password } = req.body;
 
       const user = await prisma.user.create({
-        data: { email, name },
+        data: { email, password },
       });
 
       res.status(201).json(user);

@@ -8,7 +8,8 @@
     "start": "node dist/server.js",
     "dev": "ts-node-dev --respawn src/server.ts",
     "test": "DATABASE_URL=postgresql://postgres:password@localhost:5432/testdb jest",
-    "test:watch": "jest --watch"
+    "test:unit": "DATABASE_URL=postgresql://postgres:password@localhost:5432/testdb jest --testPathIgnorePatterns=src/integration-test",
+    "test:integration": "DATABASE_URL=postgresql://postgres:password@localhost:5432/testdb jest src/integration-test"
   },
   "keywords": [],
   "author": "",
